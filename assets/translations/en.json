@@ -1,0 +1,24 @@
+{
+  "title": "Register Form",
+  "full_name": "Full Name *",
+  "example_name": "Example: Lev Fidirko",
+  "phone_number": "Phone Number *",
+  "phone_format": "Phone format: +7XXXXXXXXXX",
+  "email_address": "Email Address *",
+  "life_story": "Life Story",
+  "story_hint": "Keep it short, this is just a demo",
+  "password": "Password *",
+  "confirm_pass": "Confirm Password *",
+  "submit_form": "Submit Form",
+  "change_lang": "Change language",
+
+  "name_required": "Name is required",
+  "email_required": "Email is required",
+  "email_invalid": "Enter a valid email (must contain @)",
+  "phone_required": "Phone number is required",
+  "phone_must_start": "Phone number must start with +7",
+  "phone_invalid": "Phone must be +7 followed by 10 digits",
+  "pass_required": "Password is required",
+  "pass_length": "Password must be at least 6 characters",
+  "pass_not_match": "Passwords do not match"
+}

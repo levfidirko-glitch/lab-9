@@ -1,0 +1,24 @@
+{
+  "title": "Форма регистрации",
+  "full_name": "Полное имя *",
+  "example_name": "Пример: Лев Фидирко",
+  "phone_number": "Номер телефона *",
+  "phone_format": "Формат телефона: +7XXXXXXXXXX",
+  "email_address": "Эл. почта *",
+  "life_story": "История о себе",
+  "story_hint": "Кратко, это просто демо",
+  "password": "Пароль *",
+  "confirm_pass": "Подтвердите пароль *",
+  "submit_form": "Отправить форму",
+  "change_lang": "Сменить язык",
+
+  "name_required": "Имя обязательно",
+  "email_required": "Email обязателен",
+  "email_invalid": "Введите корректный email (должен содержать @)",
+  "phone_required": "Телефон обязателен",
+  "phone_must_start": "Номер должен начинаться с +7",
+  "phone_invalid": "Телефон должен быть формата +7 и 10 цифр",
+  "pass_required": "Пароль обязателен",
+  "pass_length": "Пароль должен быть не короче 6 символов",
+  "pass_not_match": "Пароли не совпадают"
+}

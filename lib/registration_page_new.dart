@@ -4,14 +4,14 @@ import 'package:flutter_application_1/constant/app_colors.dart';
 import 'package:flutter_application_1/constant/text_style_values.dart';
 import 'user_info_page.dart';
 
-class RegistrationPage extends StatefulWidget {
-  const RegistrationPage({super.key});
+class RegistrationPageNew extends StatefulWidget {
+  const RegistrationPageNew({super.key});
 
   @override
-  State<RegistrationPage> createState() => _RegistrationPageState();
+  State<RegistrationPageNew> createState() => _RegistrationPageNewState();
 }
 
-class _RegistrationPageState extends State<RegistrationPage> {
+class _RegistrationPageNewState extends State<RegistrationPageNew> {
   final _formKey = GlobalKey<FormState>();
 
   final nameCtrl = TextEditingController();
@@ -106,24 +106,28 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('BUILD FROM NEW PAGE ✅'); 
+
     return Scaffold(
       backgroundColor: AppColors.creamColor,
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
-        title: Text('title'.tr(), style: AppTextStyles.px12Blue),
+        title: Text(
+  'title'.tr(),
+  style: AppTextStyles.px12Blue.copyWith(
+    fontSize: 22, 
+    fontWeight: FontWeight.bold,
+    color: Colors.black, 
+  ),
+),
         centerTitle: true,
       ),
       body: SafeArea(
         child: Form(
           key: _formKey,
-
-          // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-          // ВОТ ОН ListView
-          // Всё содержимое экрана — это ListView со списком children:[ ... ]
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              // -------- Full Name --------
               TextFormField(
                 controller: nameCtrl,
                 textInputAction: TextInputAction.next,
@@ -136,7 +140,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ),
               const SizedBox(height: 12),
 
-              // -------- Phone --------
               TextFormField(
                 controller: phoneCtrl,
                 keyboardType: TextInputType.phone,
@@ -151,7 +154,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ),
               const SizedBox(height: 12),
 
-              // -------- Email --------
               TextFormField(
                 controller: emailCtrl,
                 keyboardType: TextInputType.emailAddress,
@@ -164,7 +166,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ),
               const SizedBox(height: 12),
 
-              // -------- Story --------
               TextFormField(
                 controller: storyCtrl,
                 maxLines: 3,
@@ -177,7 +178,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ),
               const SizedBox(height: 12),
 
-              // -------- Password --------
               TextFormField(
                 controller: passCtrl,
                 obscureText: _hidePass,
@@ -186,8 +186,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   label: 'password'.tr(),
                   icon: Icons.lock_outline,
                   suffix: IconButton(
-                    onPressed: () =>
-                        setState(() => _hidePass = !_hidePass),
+                    onPressed: () => setState(() => _hidePass = !_hidePass),
                     icon: Icon(
                       _hidePass ? Icons.visibility : Icons.visibility_off,
                       color: AppColors.indigoColor,
@@ -198,7 +197,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ),
               const SizedBox(height: 12),
 
-              // -------- Confirm Password --------
               TextFormField(
                 controller: confirmCtrl,
                 obscureText: _hideConfirm,
@@ -207,12 +205,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   label: 'confirm_pass'.tr(),
                   icon: Icons.lock_reset_outlined,
                   suffix: IconButton(
-                    onPressed: () =>
-                        setState(() => _hideConfirm = !_hideConfirm),
+                    onPressed: () => setState(() => _hideConfirm = !_hideConfirm),
                     icon: Icon(
-                      _hideConfirm
-                          ? Icons.visibility
-                          : Icons.visibility_off,
+                      _hideConfirm ? Icons.visibility : Icons.visibility_off,
                       color: AppColors.indigoColor,
                     ),
                   ),
@@ -222,7 +217,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
               const SizedBox(height: 24),
 
-              // -------- Submit Button --------
               SizedBox(
                 height: 48,
                 child: ElevatedButton(
@@ -235,15 +229,18 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   ),
                   onPressed: _submit,
                   child: Text(
-                    'submit_form'.tr(),
-                    style: AppTextStyles.px12Blue,
-                  ),
+  'submit_form'.tr(),
+  style: AppTextStyles.px12Blue.copyWith(
+    fontSize: 18, 
+    fontWeight: FontWeight.bold,
+    color: Colors.black, 
+  ),
+),
                 ),
               ),
 
               const SizedBox(height: 16),
 
-              // -------- Language Switcher (нижние кнопки EN / RU) --------
               Center(
                 child: Column(
                   children: [
@@ -255,7 +252,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // EN button
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.confirmed,
@@ -264,16 +260,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                               borderRadius: BorderRadius.circular(6),
                             ),
                           ),
-                          onPressed: () =>
-                              context.setLocale(const Locale('en')),
-                          child: Text(
-                            'EN',
-                            style: AppTextStyles.superSmall,
-                          ),
+                          onPressed: () => context.setLocale(const Locale('en')),
+                          child: Text('EN', style: AppTextStyles.superSmall),
                         ),
                         const SizedBox(width: 12),
-
-                        // RU button
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.tertiary,
@@ -282,12 +272,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                               borderRadius: BorderRadius.circular(6),
                             ),
                           ),
-                          onPressed: () =>
-                              context.setLocale(const Locale('ru')),
-                          child: Text(
-                            'RU',
-                            style: AppTextStyles.superSmall,
-                          ),
+                          onPressed: () => context.setLocale(const Locale('ru')),
+                          child: Text('RU', style: AppTextStyles.superSmall),
                         ),
                       ],
                     ),
@@ -295,7 +281,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 40),
             ],
           ),
         ),
