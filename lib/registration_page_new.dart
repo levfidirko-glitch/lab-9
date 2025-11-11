@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:flutter_application_1/constant/app_colors.dart';
 import 'package:flutter_application_1/constant/text_style_values.dart';
+import 'package:flutter_application_1/bloc/auth_bloc.dart';
 import 'user_info_page.dart';
 
 class RegistrationPageNew extends StatefulWidget {
@@ -51,9 +54,7 @@ class _RegistrationPageNewState extends State<RegistrationPageNew> {
   String? _validatePhone(String? v) {
     if (v == null || v.isEmpty) return 'phone_required'.tr();
     if (!v.startsWith('+7')) return 'phone_must_start'.tr();
-    if (!RegExp(r'^\+7\d{10}$').hasMatch(v)) {
-      return 'phone_invalid'.tr();
-    }
+    if (!RegExp(r'^\+7\d{10}$').hasMatch(v)) return 'phone_invalid'.tr();
     return null;
   }
 
@@ -68,19 +69,18 @@ class _RegistrationPageNewState extends State<RegistrationPageNew> {
     return null;
   }
 
+  
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => UserInfoPage(
-            name: nameCtrl.text.trim(),
-            phone: phoneCtrl.text.trim(),
-            email: emailCtrl.text.trim(),
-            story: storyCtrl.text.trim(),
-          ),
-        ),
-      );
+      context.read<AuthBloc>().add(
+            RegisterSubmitted(
+              name: nameCtrl.text.trim(),
+              phone: phoneCtrl.text.trim(),
+              email: emailCtrl.text.trim(),
+              story: storyCtrl.text.trim(),
+              password: passCtrl.text,
+            ),
+          );
     }
   }
 
@@ -106,183 +106,205 @@ class _RegistrationPageNewState extends State<RegistrationPageNew> {
 
   @override
   Widget build(BuildContext context) {
-    print('BUILD FROM NEW PAGE ✅'); 
-
-    return Scaffold(
-      backgroundColor: AppColors.creamColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.primaryColor,
-        title: Text(
-  'title'.tr(),
-  style: AppTextStyles.px12Blue.copyWith(
-    fontSize: 22, 
-    fontWeight: FontWeight.bold,
-    color: Colors.black, 
-  ),
-),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              TextFormField(
-                controller: nameCtrl,
-                textInputAction: TextInputAction.next,
-                decoration: _boxDecoration(
-                  label: 'full_name'.tr(),
-                  icon: Icons.person_outline,
-                  helper: 'example_name'.tr(),
-                ),
-                validator: _validateName,
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthSuccess) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => UserInfoPage(
+                name: state.name,
+                phone: state.phone,
+                email: state.email,
+                story: state.story,
               ),
-              const SizedBox(height: 12),
-
-              TextFormField(
-                controller: phoneCtrl,
-                keyboardType: TextInputType.phone,
-                textInputAction: TextInputAction.next,
-                decoration: _boxDecoration(
-                  label: 'phone_number'.tr(),
-                  icon: Icons.phone_outlined,
-                  helper: 'phone_format'.tr(),
-                  hint: '+7XXXXXXXXXX',
+            ),
+          );
+        } else if (state is AuthFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.creamColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.primaryColor, 
+          title: Text(
+            'title'.tr(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            
+          ),
+          centerTitle: true,
+        ),
+        body: SafeArea(
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                TextFormField(
+                  controller: nameCtrl,
+                  textInputAction: TextInputAction.next,
+                  decoration: _boxDecoration(
+                    label: 'full_name'.tr(),
+                    icon: Icons.person_outline,
+                    helper: 'example_name'.tr(),
+                  ),
+                  validator: _validateName,
                 ),
-                validator: _validatePhone,
-              ),
-              const SizedBox(height: 12),
+                const SizedBox(height: 12),
 
-              TextFormField(
-                controller: emailCtrl,
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                decoration: _boxDecoration(
-                  label: 'email_address'.tr(),
-                  icon: Icons.email_outlined,
+                TextFormField(
+                  controller: phoneCtrl,
+                  keyboardType: TextInputType.phone,
+                  textInputAction: TextInputAction.next,
+                  decoration: _boxDecoration(
+                    label: 'phone_number'.tr(),
+                    icon: Icons.phone_outlined,
+                    helper: 'phone_format'.tr(),
+                    hint: '+7XXXXXXXXXX',
+                  ),
+                  validator: _validatePhone,
                 ),
-                validator: _validateEmail,
-              ),
-              const SizedBox(height: 12),
+                const SizedBox(height: 12),
 
-              TextFormField(
-                controller: storyCtrl,
-                maxLines: 3,
-                textInputAction: TextInputAction.newline,
-                decoration: _boxDecoration(
-                  label: 'life_story'.tr(),
-                  icon: Icons.notes_outlined,
-                  helper: 'story_hint'.tr(),
+                TextFormField(
+                  controller: emailCtrl,
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
+                  decoration: _boxDecoration(
+                    label: 'email_address'.tr(),
+                    icon: Icons.email_outlined,
+                  ),
+                  validator: _validateEmail,
                 ),
-              ),
-              const SizedBox(height: 12),
+                const SizedBox(height: 12),
 
-              TextFormField(
-                controller: passCtrl,
-                obscureText: _hidePass,
-                textInputAction: TextInputAction.next,
-                decoration: _boxDecoration(
-                  label: 'password'.tr(),
-                  icon: Icons.lock_outline,
-                  suffix: IconButton(
-                    onPressed: () => setState(() => _hidePass = !_hidePass),
-                    icon: Icon(
-                      _hidePass ? Icons.visibility : Icons.visibility_off,
-                      color: AppColors.indigoColor,
-                    ),
+                TextFormField(
+                  controller: storyCtrl,
+                  maxLines: 3,
+                  textInputAction: TextInputAction.newline,
+                  decoration: _boxDecoration(
+                    label: 'life_story'.tr(),
+                    icon: Icons.notes_outlined,
+                    helper: 'story_hint'.tr(),
                   ),
                 ),
-                validator: _validatePass,
-              ),
-              const SizedBox(height: 12),
+                const SizedBox(height: 12),
 
-              TextFormField(
-                controller: confirmCtrl,
-                obscureText: _hideConfirm,
-                textInputAction: TextInputAction.done,
-                decoration: _boxDecoration(
-                  label: 'confirm_pass'.tr(),
-                  icon: Icons.lock_reset_outlined,
-                  suffix: IconButton(
-                    onPressed: () => setState(() => _hideConfirm = !_hideConfirm),
-                    icon: Icon(
-                      _hideConfirm ? Icons.visibility : Icons.visibility_off,
-                      color: AppColors.indigoColor,
+                TextFormField(
+                  controller: passCtrl,
+                  obscureText: _hidePass,
+                  textInputAction: TextInputAction.next,
+                  decoration: _boxDecoration(
+                    label: 'password'.tr(),
+                    icon: Icons.lock_outline,
+                    suffix: IconButton(
+                      onPressed: () => setState(() => _hidePass = !_hidePass),
+                      icon: Icon(
+                        _hidePass ? Icons.visibility : Icons.visibility_off,
+                        color: AppColors.indigoColor,
+                      ),
                     ),
                   ),
+                  validator: _validatePass,
                 ),
-                validator: _validateConfirm,
-              ),
+                const SizedBox(height: 12),
 
-              const SizedBox(height: 24),
-
-              SizedBox(
-                height: 48,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.secondary,
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
+                TextFormField(
+                  controller: confirmCtrl,
+                  obscureText: _hideConfirm,
+                  textInputAction: TextInputAction.done,
+                  decoration: _boxDecoration(
+                    label: 'confirm_pass'.tr(),
+                    icon: Icons.lock_reset_outlined,
+                    suffix: IconButton(
+                      onPressed: () => setState(() => _hideConfirm = !_hideConfirm),
+                      icon: Icon(
+                        _hideConfirm ? Icons.visibility : Icons.visibility_off,
+                        color: AppColors.indigoColor,
+                      ),
                     ),
                   ),
-                  onPressed: _submit,
-                  child: Text(
-  'submit_form'.tr(),
-  style: AppTextStyles.px12Blue.copyWith(
-    fontSize: 18, 
-    fontWeight: FontWeight.bold,
-    color: Colors.black, 
-  ),
-),
+                  validator: _validateConfirm,
                 ),
-              ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 24),
 
-              Center(
-                child: Column(
-                  children: [
-                    Text(
-                      'change_lang'.tr(),
-                      style: AppTextStyles.superSmall,
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.confirmed,
-                            foregroundColor: Colors.black,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
-                            ),
+                
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    final loading = state is AuthLoading;
+                    return SizedBox(
+                      height: 48,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.secondary, 
+                          foregroundColor: Colors.black,         
+                          textStyle: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900,
+                          ), 
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
                           ),
-                          onPressed: () => context.setLocale(const Locale('en')),
-                          child: Text('EN', style: AppTextStyles.superSmall),
                         ),
-                        const SizedBox(width: 12),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.tertiary,
-                            foregroundColor: Colors.black,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                          ),
-                          onPressed: () => context.setLocale(const Locale('ru')),
-                          child: Text('RU', style: AppTextStyles.superSmall),
-                        ),
-                      ],
-                    ),
-                  ],
+                        onPressed: loading ? null : _submit,
+                        child: loading
+                            ? const SizedBox(
+                                height: 22,
+                                width: 22,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : Text('submit_form'.tr()),
+                      ),
+                    );
+                  },
                 ),
-              ),
 
-              const SizedBox(height: 40),
-            ],
+                const SizedBox(height: 16),
+
+                Center(
+                  child: Column(
+                    children: [
+                      Text('change_lang'.tr(), style: AppTextStyles.superSmall),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.confirmed,
+                              foregroundColor: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                            ),
+                            onPressed: () => context.setLocale(const Locale('en')),
+                            child: Text('EN', style: AppTextStyles.superSmall),
+                          ),
+                          const SizedBox(width: 12),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.tertiary,
+                              foregroundColor: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                            ),
+                            onPressed: () => context.setLocale(const Locale('ru')),
+                            child: Text('RU', style: AppTextStyles.superSmall),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),
