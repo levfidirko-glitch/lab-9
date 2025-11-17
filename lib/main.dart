@@ -12,37 +12,42 @@ Future<void> main() async {
 
   runApp(
     EasyLocalization(
-      supportedLocales: const [Locale('en'), Locale('ru')],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ru'),
+      ],
       path: 'assets/translations',
       fallbackLocale: const Locale('en'),
-      child: const MyApp(),
+      child: const AppRoot(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class AppRoot extends StatelessWidget {
+  const AppRoot({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
+    return BlocProvider<AuthBloc>(
       create: (_) => AuthBloc(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Lab 8',
-        localizationsDelegates: context.localizationDelegates,
-        supportedLocales: context.supportedLocales,
         locale: context.locale,
+        supportedLocales: context.supportedLocales,
+        localizationsDelegates: context.localizationDelegates,
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryColor),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: AppColors.primaryColor,
+          ),
           appBarTheme: const AppBarTheme(
+            foregroundColor: Colors.black,
             titleTextStyle: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
               color: Colors.black,
-              fontSize: 28,
-              fontWeight: FontWeight.w900,
             ),
-            foregroundColor: Colors.black, 
           ),
         ),
         home: const RegistrationPageNew(),

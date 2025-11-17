@@ -22,35 +22,78 @@ class UserInfoPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.creamColor,
       appBar: AppBar(
-        title: Text('user_info'.tr(), style: AppTextStyles.px12Blue),
-        backgroundColor: AppColors.primaryColor,
+        backgroundColor: Colors.white,
+        elevation: 1,
+        centerTitle: true,
+        title: Text(
+          'user_info'.tr(),
+          style: AppTextStyles.px12Blue.copyWith(
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+            color: Colors.black87,
+          ),
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _info('name'.tr(), name),
-            _info('phone'.tr(), phone),
-            _info('email'.tr(), email),
-            const SizedBox(height: 10),
-            Text('story'.tr(),
-                style: AppTextStyles.px12Blue.copyWith(fontWeight: FontWeight.bold)),
-            Text(story.isEmpty ? '-' : story, style: AppTextStyles.superSmall),
+            _infoItem('name'.tr(), name),
+            _infoItem('phone'.tr(), phone),
+            _infoItem('email'.tr(), email),
+
+            const SizedBox(height: 18),
+
+            Text(
+              'story'.tr(),
+              style: AppTextStyles.px12Blue.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                color: Colors.black87,
+              ),
+            ),
+
+            const SizedBox(height: 6),
+
+            Text(
+              story.trim().isEmpty ? '-' : story,
+              style: AppTextStyles.superSmall.copyWith(
+                fontSize: 13,
+                color: Colors.black87,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _info(String label, String value) {
+  Widget _infoItem(String label, String value) {
+    final data = value.trim().isEmpty ? '-' : value;
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('$label: ',
-              style: AppTextStyles.px12Blue.copyWith(fontWeight: FontWeight.bold)),
-          Expanded(child: Text(value.isEmpty ? '-' : value, style: AppTextStyles.superSmall)),
+          Text(
+            '$label: ',
+            style: AppTextStyles.px12Blue.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              color: Colors.black87,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              data,
+              style: AppTextStyles.superSmall.copyWith(
+                fontSize: 13,
+                color: Colors.black87,
+              ),
+            ),
+          ),
         ],
       ),
     );

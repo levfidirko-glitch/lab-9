@@ -38,38 +38,41 @@ class _RegistrationPageNewState extends State<RegistrationPageNew> {
     super.dispose();
   }
 
-  String? _validateName(String? v) {
-    if (v == null || v.trim().isEmpty) return 'name_required'.tr();
+  String? _validateName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'name_required'.tr();
+    }
     return null;
   }
 
-  String? _validateEmail(String? v) {
-    if (v == null || v.trim().isEmpty) return 'email_required'.tr();
-    if (!v.contains('@')) return 'email_invalid'.tr();
+  String? _validateEmail(String? value) {
+    if (value == null || value.trim().isEmpty) return 'email_required'.tr();
+    if (!value.contains('@')) return 'email_invalid'.tr();
+
     final emailReg = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-    if (!emailReg.hasMatch(v.trim())) return 'email_invalid'.tr();
+    if (!emailReg.hasMatch(value.trim())) return 'email_invalid'.tr();
+
     return null;
   }
 
-  String? _validatePhone(String? v) {
-    if (v == null || v.isEmpty) return 'phone_required'.tr();
-    if (!v.startsWith('+7')) return 'phone_must_start'.tr();
-    if (!RegExp(r'^\+7\d{10}$').hasMatch(v)) return 'phone_invalid'.tr();
+  String? _validatePhone(String? value) {
+    if (value == null || value.isEmpty) return 'phone_required'.tr();
+    if (!value.startsWith('+7')) return 'phone_must_start'.tr();
+    if (!RegExp(r'^\+7\d{10}$').hasMatch(value)) return 'phone_invalid'.tr();
     return null;
   }
 
-  String? _validatePass(String? v) {
-    if (v == null || v.isEmpty) return 'pass_required'.tr();
-    if (v.length < 6) return 'pass_length'.tr();
+  String? _validatePass(String? value) {
+    if (value == null || value.isEmpty) return 'pass_required'.tr();
+    if (value.length < 6) return 'pass_length'.tr();
     return null;
   }
 
-  String? _validateConfirm(String? v) {
-    if (v != passCtrl.text) return 'pass_not_match'.tr();
+  String? _validateConfirm(String? value) {
+    if (value != passCtrl.text) return 'pass_not_match'.tr();
     return null;
   }
 
-  
   void _submit() {
     if (_formKey.currentState!.validate()) {
       context.read<AuthBloc>().add(
@@ -84,7 +87,7 @@ class _RegistrationPageNewState extends State<RegistrationPageNew> {
     }
   }
 
-  InputDecoration _boxDecoration({
+  InputDecoration _fieldStyle({
     required String label,
     required IconData icon,
     String? helper,
@@ -93,11 +96,12 @@ class _RegistrationPageNewState extends State<RegistrationPageNew> {
   }) {
     return InputDecoration(
       labelText: label,
-      hintText: hint,
       helperText: helper,
-      prefixIcon: Icon(icon, color: AppColors.azure),
+      hintText: hint,
+      prefixIcon: Icon(icon, color: AppColors.indigoColor),
+      contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide(color: AppColors.gray),
       ),
       suffixIcon: suffix,
@@ -121,19 +125,28 @@ class _RegistrationPageNewState extends State<RegistrationPageNew> {
           );
         } else if (state is AuthFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
+            SnackBar(
+              backgroundColor: Colors.red.shade400,
+              content: Text(
+                state.message,
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
           );
         }
       },
       child: Scaffold(
         backgroundColor: AppColors.creamColor,
         appBar: AppBar(
-          backgroundColor: AppColors.primaryColor, 
+          backgroundColor: Colors.white,
+          elevation: 1,
           title: Text(
             'title'.tr(),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: Colors.black87,
+            ),
           ),
           centerTitle: true,
         ),
@@ -141,121 +154,120 @@ class _RegistrationPageNewState extends State<RegistrationPageNew> {
           child: Form(
             key: _formKey,
             child: ListView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
               children: [
                 TextFormField(
                   controller: nameCtrl,
-                  textInputAction: TextInputAction.next,
-                  decoration: _boxDecoration(
+                  decoration: _fieldStyle(
                     label: 'full_name'.tr(),
-                    icon: Icons.person_outline,
+                    icon: Icons.person,
                     helper: 'example_name'.tr(),
                   ),
+                  textInputAction: TextInputAction.next,
                   validator: _validateName,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
 
                 TextFormField(
                   controller: phoneCtrl,
-                  keyboardType: TextInputType.phone,
-                  textInputAction: TextInputAction.next,
-                  decoration: _boxDecoration(
+                  decoration: _fieldStyle(
                     label: 'phone_number'.tr(),
-                    icon: Icons.phone_outlined,
+                    icon: Icons.phone,
                     helper: 'phone_format'.tr(),
                     hint: '+7XXXXXXXXXX',
                   ),
+                  keyboardType: TextInputType.phone,
+                  textInputAction: TextInputAction.next,
                   validator: _validatePhone,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
 
                 TextFormField(
                   controller: emailCtrl,
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                  decoration: _boxDecoration(
+                  decoration: _fieldStyle(
                     label: 'email_address'.tr(),
                     icon: Icons.email_outlined,
                   ),
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
                   validator: _validateEmail,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
 
                 TextFormField(
                   controller: storyCtrl,
                   maxLines: 3,
-                  textInputAction: TextInputAction.newline,
-                  decoration: _boxDecoration(
+                  decoration: _fieldStyle(
                     label: 'life_story'.tr(),
-                    icon: Icons.notes_outlined,
+                    icon: Icons.notes_rounded,
                     helper: 'story_hint'.tr(),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
 
                 TextFormField(
                   controller: passCtrl,
                   obscureText: _hidePass,
-                  textInputAction: TextInputAction.next,
-                  decoration: _boxDecoration(
+                  decoration: _fieldStyle(
                     label: 'password'.tr(),
                     icon: Icons.lock_outline,
                     suffix: IconButton(
                       onPressed: () => setState(() => _hidePass = !_hidePass),
                       icon: Icon(
                         _hidePass ? Icons.visibility : Icons.visibility_off,
-                        color: AppColors.indigoColor,
+                        color: AppColors.primaryColor,
                       ),
                     ),
                   ),
                   validator: _validatePass,
+                  textInputAction: TextInputAction.next,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
 
                 TextFormField(
                   controller: confirmCtrl,
                   obscureText: _hideConfirm,
-                  textInputAction: TextInputAction.done,
-                  decoration: _boxDecoration(
+                  decoration: _fieldStyle(
                     label: 'confirm_pass'.tr(),
                     icon: Icons.lock_reset_outlined,
                     suffix: IconButton(
-                      onPressed: () => setState(() => _hideConfirm = !_hideConfirm),
+                      onPressed: () =>
+                          setState(() => _hideConfirm = !_hideConfirm),
                       icon: Icon(
                         _hideConfirm ? Icons.visibility : Icons.visibility_off,
-                        color: AppColors.indigoColor,
+                        color: AppColors.primaryColor,
                       ),
                     ),
                   ),
                   validator: _validateConfirm,
+                  textInputAction: TextInputAction.done,
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 28),
 
-                
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
-                    final loading = state is AuthLoading;
+                    final isLoading = state is AuthLoading;
+
                     return SizedBox(
-                      height: 48,
+                      height: 50,
                       child: ElevatedButton(
+                        onPressed: isLoading ? null : _submit,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.secondary, 
-                          foregroundColor: Colors.black,         
-                          textStyle: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w900,
-                          ), 
+                          backgroundColor: AppColors.indigoColor,
+                          foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          textStyle: const TextStyle(
+                            fontSize: 21,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                        onPressed: loading ? null : _submit,
-                        child: loading
-                            ? const SizedBox(
-                                height: 22,
-                                width: 22,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                        child: isLoading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
                               )
                             : Text('submit_form'.tr()),
                       ),
@@ -263,38 +275,45 @@ class _RegistrationPageNewState extends State<RegistrationPageNew> {
                   },
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
 
                 Center(
                   child: Column(
                     children: [
-                      Text('change_lang'.tr(), style: AppTextStyles.superSmall),
-                      const SizedBox(height: 8),
+                      Text(
+                        'change_lang'.tr(),
+                        style: AppTextStyles.superSmall,
+                      ),
+                      const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.confirmed,
+                              backgroundColor: Colors.white,
                               foregroundColor: Colors.black,
+                              elevation: 1,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            onPressed: () => context.setLocale(const Locale('en')),
-                            child: Text('EN', style: AppTextStyles.superSmall),
+                            onPressed: () =>
+                                context.setLocale(const Locale('en')),
+                            child: const Text('EN'),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 16),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.tertiary,
+                              backgroundColor: Colors.white,
                               foregroundColor: Colors.black,
+                              elevation: 1,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            onPressed: () => context.setLocale(const Locale('ru')),
-                            child: Text('RU', style: AppTextStyles.superSmall),
+                            onPressed: () =>
+                                context.setLocale(const Locale('ru')),
+                            child: const Text('RU'),
                           ),
                         ],
                       ),
